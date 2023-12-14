@@ -21,7 +21,6 @@ case class PassengersData(
 
 // Object FlightDataUtils: Contains utility functions for processing flight data analysis tasks
 object FlightDataUtils {
-  // Define case classes and other functions as before
   // Function to read input data in CSV format
   def readData(spark: SparkSession, path: String): Dataset[_] = {
 
