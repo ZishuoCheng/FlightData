@@ -67,7 +67,7 @@ object FlightDataUtils {
     import spark.implicits._
 
     flightsData
-      .dropDuplicates("Date", "FlightID") // Assumption: a flight appears only once on the same date.
+      .dropDuplicates("Date", "FlightID") // Assumption: flight IDs are distinct (i.e. no two different flights will have the same ID number).
       .withColumn("Month", month($"date"))
       .groupBy("Month")
       .agg(count("*").as("Number of Flights"))
@@ -103,6 +103,11 @@ object FlightDataUtils {
     import spark.implicits._
 
     val windowSpec = Window.partitionBy("PassengerID").orderBy("Date")
+
+    // Assumption: If a passenger's journey appears across multiple rows for the same date,
+    // the travel sequence is determined based on the order of the data rows.
+    // This approach may not accurately reflect the actual travel sequence in cases where
+    // specific flight times are not available.
     flightsData
       .withColumn("nextFrom", lead("from", 1).over(windowSpec))
       .withColumn("isLastRow", lead("from", 1).over(windowSpec).isNull)
